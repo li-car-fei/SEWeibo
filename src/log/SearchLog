@@ -1,0 +1,62 @@
+2023-11-10 17:06:15,951: INFO rootCategory : Log init success
+2023-11-10 17:06:17,226: INFO rootCategory : cppjieba init!
+2023-11-10 17:06:21,692: INFO rootCategory : 停词库，情感词表，网页库，偏移库，倒排索引库，情感得分表 读取数据成功!
+2023-11-10 17:06:28,979: INFO rootCategory : >>client has connected 127.0.0.1:9006 >> 127.0.0.1:34133
+2023-11-10 17:06:28,979: INFO rootCategory : search event: 蔡徐坤
+2023-11-10 17:06:28,980: INFO rootCategory : redis key exists: 蔡徐坤
+2023-11-10 17:06:28,980: INFO rootCategory : >>client has broken up 127.0.0.1:9006 >> 127.0.0.1:34133
+2023-11-10 17:06:39,074: INFO rootCategory : >>client has connected 127.0.0.1:9006 >> 127.0.0.1:34136
+2023-11-10 17:06:39,074: INFO rootCategory : search event: 小镇
+2023-11-10 17:06:39,074: INFO rootCategory : redis key doesn't exist: 小镇
+2023-11-10 17:06:39,075: INFO rootCategory : set redis key: 小镇
+2023-11-10 17:06:39,075: INFO rootCategory : >>client has broken up 127.0.0.1:9006 >> 127.0.0.1:34136
+2023-11-10 17:06:54,883: INFO rootCategory : >>client has connected 127.0.0.1:9006 >> 127.0.0.1:34137
+2023-11-10 17:06:54,883: INFO rootCategory : search event: 好看的女孩打篮球
+2023-11-10 17:06:54,884: INFO rootCategory : redis key doesn't exist: 好看的女孩打篮球
+2023-11-10 17:06:54,894: INFO rootCategory : set redis key: 好看的女孩打篮球
+2023-11-10 17:06:54,894: INFO rootCategory : >>client has broken up 127.0.0.1:9006 >> 127.0.0.1:34137
+2023-11-10 17:06:58,857: INFO rootCategory : >>client has connected 127.0.0.1:9006 >> 127.0.0.1:34138
+2023-11-10 17:06:58,857: INFO rootCategory : search event: 女孩打篮球
+2023-11-10 17:06:58,857: INFO rootCategory : redis key doesn't exist: 女孩打篮球
+2023-11-10 17:06:58,858: INFO rootCategory : set redis key: 女孩打篮球
+2023-11-10 17:06:58,858: INFO rootCategory : >>client has broken up 127.0.0.1:9006 >> 127.0.0.1:34138
+2023-11-10 17:07:06,642: INFO rootCategory : >>client has connected 127.0.0.1:9006 >> 127.0.0.1:34139
+2023-11-10 17:07:06,642: INFO rootCategory : search event: 帅气打篮球
+2023-11-10 17:07:06,642: INFO rootCategory : redis key doesn't exist: 帅气打篮球
+2023-11-10 17:07:06,642: INFO rootCategory : set redis key: 帅气打篮球
+2023-11-10 17:07:06,643: INFO rootCategory : >>client has broken up 127.0.0.1:9006 >> 127.0.0.1:34139
+2023-11-10 17:07:10,545: INFO rootCategory : >>client has connected 127.0.0.1:9006 >> 127.0.0.1:34140
+2023-11-10 17:07:10,545: INFO rootCategory : search event: 打篮球
+2023-11-10 17:07:10,545: INFO rootCategory : redis key doesn't exist: 打篮球
+2023-11-10 17:07:10,546: INFO rootCategory : set redis key: 打篮球
+2023-11-10 17:07:10,546: INFO rootCategory : >>client has broken up 127.0.0.1:9006 >> 127.0.0.1:34140
+2023-11-10 17:07:13,585: INFO rootCategory : >>client has connected 127.0.0.1:9006 >> 127.0.0.1:34141
+2023-11-10 17:07:13,585: INFO rootCategory : search event: 篮球
+2023-11-10 17:07:13,585: INFO rootCategory : redis key doesn't exist: 篮球
+2023-11-10 17:07:13,585: INFO rootCategory : set redis key: 篮球
+2023-11-10 17:07:13,585: INFO rootCategory : >>client has broken up 127.0.0.1:9006 >> 127.0.0.1:34141
+2023-11-10 17:07:20,922: INFO rootCategory : >>client has connected 127.0.0.1:9006 >> 127.0.0.1:34142
+2023-11-10 17:07:20,922: INFO rootCategory : search event: 足球
+2023-11-10 17:07:20,922: INFO rootCategory : redis key doesn't exist: 足球
+2023-11-10 17:07:20,923: INFO rootCategory : set redis key: 足球
+2023-11-10 17:07:20,923: INFO rootCategory : >>client has broken up 127.0.0.1:9006 >> 127.0.0.1:34142
+2023-11-10 17:07:34,859: INFO rootCategory : >>client has connected 127.0.0.1:9006 >> 127.0.0.1:34143
+2023-11-10 17:07:34,859: INFO rootCategory : search event: 美国霸权主义
+2023-11-10 17:07:34,859: INFO rootCategory : redis key doesn't exist: 美国霸权主义
+2023-11-10 17:07:34,861: INFO rootCategory : set redis key: 美国霸权主义
+2023-11-10 17:07:34,861: INFO rootCategory : >>client has broken up 127.0.0.1:9006 >> 127.0.0.1:34143
+2023-11-10 17:07:38,641: INFO rootCategory : >>client has connected 127.0.0.1:9006 >> 127.0.0.1:34144
+2023-11-10 17:07:38,641: INFO rootCategory : search event: 霸权主义
+2023-11-10 17:07:38,641: INFO rootCategory : redis key doesn't exist: 霸权主义
+2023-11-10 17:07:38,642: INFO rootCategory : set redis key: 霸权主义
+2023-11-10 17:07:38,642: INFO rootCategory : >>client has broken up 127.0.0.1:9006 >> 127.0.0.1:34144
+2023-11-10 17:07:41,505: INFO rootCategory : >>client has connected 127.0.0.1:9006 >> 127.0.0.1:34145
+2023-11-10 17:07:41,505: INFO rootCategory : search event: 霸权
+2023-11-10 17:07:41,505: INFO rootCategory : redis key doesn't exist: 霸权
+2023-11-10 17:07:41,506: INFO rootCategory : set redis key: 霸权
+2023-11-10 17:07:41,506: INFO rootCategory : >>client has broken up 127.0.0.1:9006 >> 127.0.0.1:34145
+2023-11-10 17:07:49,427: INFO rootCategory : >>client has connected 127.0.0.1:9006 >> 127.0.0.1:34146
+2023-11-10 17:07:49,427: INFO rootCategory : search event: 爱奇艺
+2023-11-10 17:07:49,427: INFO rootCategory : redis key doesn't exist: 爱奇艺
+2023-11-10 17:07:49,428: INFO rootCategory : set redis key: 爱奇艺
+2023-11-10 17:07:49,428: INFO rootCategory : >>client has broken up 127.0.0.1:9006 >> 127.0.0.1:34146

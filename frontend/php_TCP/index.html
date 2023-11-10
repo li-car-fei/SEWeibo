@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>search engine</title>
+	<!--链接样式引入css文件 -->
+	<link rel="stylesheet" type="text/css" href="./site.css">
+	<!--引入远程的jquery库-->
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+</head>
+
+<body>
+    <!-- div布局 -->
+    <div class="searchBlock">
+        <input type="text" id="txtSearch" class="txtDefault">
+        <input type="button" id="submitButton" class="btn searchButton" value="search">
+		<br/>
+        <div id="result">
+
+        </div><!-- 对应id="result"的结束标签  -->
+
+    </div>
+	<script>
+		var showPlaintext = false;
+		$(document).ready(function(){
+			$("#submitButton").on("click", function(e){
+				e.preventDefault();
+				var searchContent = $("#txtSearch").val() + "\n";
+				
+				$.post("php_client.php", {content: searchContent}, function(data, status){
+					if(status == "success"){
+						if(showPlaintext){
+							$("#result").html(data);
+						}else{
+							// 将收到的json字符串（data）转化为json对象，注意json字符串与json对象的区别
+							var obj = eval("(" + data + ")");
+
+							// 清空result内容
+							$("#result").html("");
+
+							// 遍历json对象
+							$.each(obj.files, function(i, item) {
+								$("#result").append(
+									'<div class="item">' +
+										'<div class="summary">[摘要] ' + item.summary+ '</div>' +
+										'<div class="details">' +
+											'<span>[点赞] ' + item.like + '</span>' +
+											'<span>[粉丝] ' + item.fans + '</span>' +
+											'<span>[关注] ' + item.focus + '</span>' +
+											'<span>[地区] ' + item.province + '</span>' +
+										'</div>' +
+										'<div class="additional-info">' +
+											'<span>[TF-IDF] ' + item.similarity + '</span>' +
+											'<span>[情感值] ' + item.emotion + '</span>' +
+										'</div>' +
+									'</div>'
+								);
+							});
+						}
+					}
+					else{
+						alert(error);
+					}
+				});
+			});
+		});
+	</script>
+</body>  <!-- body 结束标签 -->
+</html>  <!-- html 结束标签 -->

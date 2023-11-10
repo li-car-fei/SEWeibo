@@ -1,0 +1,17 @@
+# 基于 apache2 简单搭建前端
+
+# 安装 apache2 与 php
+$ sudo apt-get update
+$ sudo apt-get upgrade
+$ sudo apt-get install apache2
+$ sudo apt-get install php7 libapache2-mod-php7.0
+
+# 将 php_TCP 文件夹放到 /var/www 文件夹下
+
+# 修改 /etc/apache2/apache2.conf 与 /etc/apache2/sites-available/000-default.conf 配置文件，配置端口号等
+
+# 开启 apache 服务
+$ sudo /etc/init.d/apache2 start
+
+# 随后访问
+http://your_ip:your_port/php_TCP/index.html
