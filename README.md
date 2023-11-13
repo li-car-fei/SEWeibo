@@ -40,6 +40,12 @@ Log 日志：
 - 前端简单写的页面，用apache搭载，详见`frontend文件夹`
 - 后端返回`json`数据，前端用`jquery`进行解析渲染
 
+##### 单 Reactor 多线程模式
+
+- net 中实现 Reactor 相关、TCPConnection 相关；由 Acceptor 负责主线程连接相关，监听新的连接请求；回调函数挂载到 TCPConnection 上，由 EventLoop 从 epoll 中取出可操作的 socket 句柄，再调用 TCPConnection 中的回调函数进行处理；
+- threadpool 实现线程池，由回调函数中将业务处理函数添加到线程池的任务队列中，是和 Server 分离开的，不影响 Server 主线程监听连接；
+- `using Task = function<void()>;` 定义了添加到线程池任务队列的数据类型，是一个可调用对象（函数、函数指针、lambda表达式等皆可）
+
 ##### redis 缓存
 
 - 单例模式实现，将搜索语句与结果的JSON语句存储到缓存中

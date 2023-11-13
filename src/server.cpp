@@ -71,7 +71,7 @@ void CloseCallBack(const TcpConnectionPtr &ptr)
 
 int main()
 {
-    //启动线程池，用于处理任务
+    //启动线程池，用于处理任务，在业务函数中向线程池添加任务，与 Server 剥离；
     Threadpool threadpool(
         stoi(Configuration::getpInstance()->getConfigMap()["threadNum"]), 
         stoi(Configuration::getpInstance()->getConfigMap()["TaskQueSize"]));
@@ -82,6 +82,8 @@ int main()
     TcpServer server(
         Configuration::getpInstance()->getConfigMap()["IP"], 
         stoi(Configuration::getpInstance()->getConfigMap()["port"]));
+
+    // TCP连接成功、客户端发送信息的处理函数、TCP关闭连接 三者的处理函数设置
     server.setConnectionCallBack(ConnectionCallBack);
     server.setMessageCallBack(MessageCallBack);
     server.setCloseCallBack(CloseCallBack);
