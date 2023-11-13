@@ -3,12 +3,21 @@
 
 #include"Log.h"
 
+/**
+ * log4cpp 使用：
+ *  （1）rootCategory 是总体的一个设置，所有log实例挂载到上面
+ *  （2）Appender 设置log打印到什么地方
+ *  （3）Layout 设置日志打印格式
+ *  （4）Layout 挂载到 Appender，Appender 再挂载到 Category，形成一个日志实例
+*/
+
 namespace wd
 {
     Log::Log(const string& filepath)
         : rootCategory(log4cpp::Category::getRoot().getInstance("rootCategory"))
     {
-        // 设置Category
+
+        // 设置打印到命令行的log   
 	    log4cpp::OstreamAppender* osAppender = new log4cpp::OstreamAppender("osAppender", &cout);
 	    log4cpp::PatternLayout* pLayout1 = new log4cpp::PatternLayout();
 	    pLayout1->setConversionPattern("%d: %p %c %x: %m%n");
@@ -16,7 +25,7 @@ namespace wd
 	    rootCategory.addAppender(osAppender);
 	    rootCategory.setPriority(log4cpp::Priority::DEBUG);
 
-	    // log文件
+	    // 设置打印到文件的log
 	    log4cpp::FileAppender*fileAppender = new log4cpp::FileAppender("fileAppender", filepath);
 	    log4cpp::PatternLayout* pLayout2 = new log4cpp::PatternLayout();
 	    pLayout2->setConversionPattern("%d: %p %c %x: %m%n");
