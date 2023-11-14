@@ -16,6 +16,7 @@ using std::cout;
 using std::endl;
 using std::ifstream;
 using std::set;
+using std::pair;
 using std::string;
 using std::stringstream;
 using std::unordered_map;
@@ -32,14 +33,20 @@ namespace wd
         void doQuery(RedisClient&, const string &str, const TcpConnectionPtr&);
 
     private:
-        void readInfoFromFile(); //从停词库，网页库，偏移库，倒排索引库读取数据
-        vector<pair<string, double>> getWeightVector(const map<string, int> &);
+        // 从停词库，网页库，偏移库，倒排索引库读取数据
+        void readInfoFromFile();
+
+        // 提取关键字和搜索文本
+        pair<vector<string>, vector<string>> parseSearch(const string& );
+
+        // 循环遍历关键字和搜索文本，构建结果
+        void searchThrough(set<int>&, map<int, map<string, int>>&, map<int, vector<pair<string, double>>>&, const vector<string>&, const vector<string>&);
 
         // 根据所有词必须匹配，得到搜索备选集
-        set<int> getAllMatchingPages(const vector<pair<string, double>> &);
+        set<int> getAllMatchingEvents(const vector<pair<string, double>> &);
 
         // 根据情感倾向一致性判断，筛选一遍备选集
-        void getEmotionMatching(set<int>& eventIds, double searchScore);
+        void getEmotionMatching(set<int>&, double);
 
         // 余弦相似度算法
         vector<pair<int, double>> cosSort(const vector<pair<string, double>> &, const set<int>&);
@@ -47,6 +54,14 @@ namespace wd
         double countCos(const vector<double> &, const vector<double> &);
         // 求向量模长
         double getMold(const vector<double> &);
+        // 获取查询文本的权重向量
+        vector<pair<string, double>> getWeightVector(const map<string, int> &);
+
+        // 解析一段搜索文本（将其看做一个event）
+        pair<map<string, int>, vector<pair<string, double>>> parseEvent(Event& );
+
+        // 根据解析和匹配结果进行返回
+        string doReturn(const set<int>&, const map<string, int>&, const vector<pair<string, double>>& , const TcpConnectionPtr&);
 
         // 将返回数据封装成json格式
         string JsonPackage(vector<pair<int,double>>& );
@@ -54,17 +69,17 @@ namespace wd
         string return404Json();
 
         // 为匹配到的文章生成摘要
-        void makePageSummary(const set<int>& pageIds, const map<string,int>& wordsMap);
+        void makePageSummary(const set<int>&, const map<string,int>&);
 
     private:
-        string _stopWords_dir;                                              // 停词库文件地址
-        string _emotionSwords_dir;                                          // 情感词典文件地址
-        string _ripePage_dir;                                               // event事件库文件地址
-        string _offset_dir;                                                 // 存储偏移记录文件地址
-        string _invertIndex_dir;                                            // TD-IDF 倒排索引文件地址
-        string _emotionScores_dir;                                          // events的情感分记录文件地址
+        string _stopWords_dir;                                               // 停词库文件地址
+        string _emotionSwords_dir;                                           // 情感词典文件地址
+        string _ripePage_dir;                                                // event事件库文件地址
+        string _offset_dir;                                                  // 存储偏移记录文件地址
+        string _invertIndex_dir;                                             // TD-IDF 倒排索引文件地址
+        string _emotionScores_dir;                                           // events的情感分记录文件地址
 
-        vector<Event> _events;                                              // 解析一段 <doc>...<doc> 后的结果，解析各部分内容、词频记录等
+        vector<Event> _events;                                               // 解析一段 <doc>...<doc> 后的结果，解析各部分内容、词频记录等
         unordered_map<int, pair<int, int>> _offsetLib;                       // 偏移库    <文档ID，<网页库文件中存储起始位置, 结束位置>>
         unordered_map<string, unordered_map<int, double>> _invertIndexTable; // 倒排索引库 <单词，<所在文档ID, 单词权重>>
         vector<double> emotionScores;                                        // event情感得分表

@@ -76,6 +76,7 @@ namespace wd
     // 根据查询语句中的词，生成当前 event 的摘要
     void Event::makeSummary(const map<string,int>& wordsMap)
     {
+        _summary.clear();
         for(auto& e: wordsMap)
         {
             size_t pos = _doc.find(e.first);
@@ -92,6 +93,7 @@ namespace wd
     {
         //注意此处不能采用正则表达式，因为一些中英文的停止词也不能够算进去
         vector<string> vec = _splitTool.cut(s);
+
         for (auto &e : vec)
         {   
             // stopword 不纳入计数
@@ -105,6 +107,7 @@ namespace wd
                 _emotionScores += _emotionWords[e];
             }
         }
+
     }
 
     struct Comp

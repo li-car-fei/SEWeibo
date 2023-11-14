@@ -32,6 +32,7 @@ namespace wd
         {
             _stopWords.insert(words);
         }
+        _stopWords.insert(" ");
 
         // 读取情感词典
         string line;
@@ -133,19 +134,142 @@ namespace wd
             return;
         }
 
+        // 提取关键字和搜索文本
+        auto parseSearchTextResult = parseSearch(s);
 
-        // 将进行查询的语句看作一篇文档进行解析
-        Event event(s, _splitTool, _stopWords, _emotionWords);
+        /**
+         * 构建返回结果所需：
+         *  （1）set<int> eventIds：事件id
+         *  （2）map<int, map<string, int>> wordsMap : 词频记录（当前搜索语句所构建的event的） 
+         *  （3）map<int, vector<pair<string, double>>> vec ：每个词与其权重（当前搜索语句所构建的event的） 
+        */
 
+        set<int> eventIds;
+        map<int, map<string, int>> wordsMaps;
+        map<int, vector<pair<string, double>>> vecs;
+
+        // 循环遍历关键字和搜索文本，构建结果
+        searchThrough(eventIds, wordsMaps, vecs, parseSearchTextResult.first, parseSearchTextResult.second);
+
+        // 根据第一个搜索map和搜索文本的vec 计算余弦排序，形成摘要
+        string message = doReturn(eventIds, wordsMaps.begin()->second, vecs.begin()->second, ptr);
+
+        // 设置缓存
+        redisClient.set(s, message);
+
+    }
+
+    // 提取关键字和搜索文本
+    pair<vector<string>, vector<string>> WordQuery::parseSearch(const string& s)
+    {
+        std::vector<std::string> keywords;
+        std::vector<std::string> searchTexts;
+
+        std::istringstream iss(s);
+        std::string word;
+        while (iss >> word) {
+            if (word == "AND" || word == "OR" || word == "NOT") {
+                keywords.push_back(word);
+            } else {
+                searchTexts.push_back(word);
+            }
+        }
+
+        // 默认为 "AND"
+        keywords.insert(keywords.begin(), "AND");
+
+        return { keywords, searchTexts };
+    }
+
+    // 循环遍历关键字和搜索文本，构建结果
+    void WordQuery::searchThrough(set<int>& eventIds, map<int, map<string, int>>& wordsMaps, map<int, vector<pair<string, double>>>& vecs, 
+                                  const vector<string>& keywords, const vector<string>& searchTexts)
+    {
+        for (size_t i = 0; i < keywords.size(); ++i)
+        {
+            const auto& keyword = keywords[i];
+            const auto& searchText = searchTexts[i]; 
+
+            // 计算当前 searchText 对应匹配的 inner_eventIds、inner_wordsMap、inner_vec
+
+            // 解析一段搜索文本（将其看做一个event）
+            Event event(searchText, _splitTool, _stopWords, _emotionWords);
+            auto parseEventResult = parseEvent(event);
+
+            // 根据解析的单词，找到所有匹配的文档ID （包含了查询文本所有单词的文档的Id集合）
+            set<int> inner_eventIds = getAllMatchingEvents(parseEventResult.second);
+            // 根据情感值筛选（查询语句的情感倾向需与匹配的文档一致）
+            getEmotionMatching(inner_eventIds, event.getAvgScore());
+
+
+            if(keyword == "AND")
+            {
+                if(eventIds.empty())
+                {
+                    eventIds = inner_eventIds;
+                    for (const auto& i : inner_eventIds)
+                    {
+                        wordsMaps[i] = parseEventResult.first;
+                        vecs[i] = parseEventResult.second;
+                    }
+
+                } else 
+                {
+                    // 求交集
+                    set<int> temp;
+                    std::set_intersection(eventIds.begin(), eventIds.end(), inner_eventIds.begin(), inner_eventIds.end(), std::inserter(temp, temp.end()));
+
+                    for (const auto& i : eventIds)
+                    {
+                        if (temp.find(i) == temp.end())
+                        {
+                            wordsMaps.erase(i);
+                            vecs.erase(i);
+                        }
+                    }
+
+                    eventIds = temp;
+
+                }
+            } else if (keyword == "OR")
+            {
+                // 求并集
+                eventIds.insert(inner_eventIds.begin(), inner_eventIds.end());
+                for (const auto& i : inner_eventIds)
+                {
+                    wordsMaps[i] = parseEventResult.first;
+                    vecs[i] = parseEventResult.second;
+                }
+
+            } else if (keyword == "NOT")
+            {
+                // 求非集
+                for (const auto& i : inner_eventIds) 
+                {
+                    eventIds.erase(i);
+                    wordsMaps.erase(i);
+                    vecs.erase(i);
+                }
+            }
+
+        }
+        
+    }
+
+    // 解析一段搜索文本（将其看做一个event）
+    pair<map<string, int>, vector<pair<string, double>>> WordQuery::parseEvent(Event& event)
+    {
         // 用TF-IDF算法计算出查询语句的单词权重向量 vec
         map<string, int> &wordsMap = event.getWordsMap();
         vector<pair<string, double>> vec = getWeightVector(wordsMap);
 
-        // 根据解析的单词，找到所有匹配的文档ID （包含了查询文本所有单词的文档的Id集合）
-        set<int> eventIds = getAllMatchingPages(vec);
-        // 根据情感值筛选（查询语句的情感倾向需与匹配的文档一致）
-        getEmotionMatching(eventIds, event.getAvgScore());
+        return { wordsMap, vec };
+    }
 
+
+    // 根据解析和匹配结果进行返回
+    string WordQuery::doReturn(const set<int> &eventIds, const map<string, int> &wordsMap, const vector<pair<string, double>>& vec, const TcpConnectionPtr &ptr)
+    {
         string ret;
         if (eventIds.empty())
         {
@@ -170,9 +294,7 @@ namespace wd
         message.append("\n").append(ret);               // 返回格式：json长度\n格式化json字符串
         ptr->sendInEventLoop(message);                  // tcp连接返回
 
-        // 设置缓存
-        redisClient.set(s, message);
-
+        return message;
     }
 
     // 为每一篇查询结果的文章生成摘要
@@ -290,11 +412,11 @@ namespace wd
         for (auto &e : weightsMap)
         {
             int docid = e.first;
-            vector<double> pageVec = e.second;      // 不同网页的查询语句的权重向量
-            double cos = countCos(pageVec, weightsVec);
+            vector<double> eventVec = e.second;      // 不同event的查询语句的权重向量
+            double cos = countCos(eventVec, weightsVec);
             sortedVec.push_back(make_pair(docid, cos));
         }
-        // 根据查询语句与网页对应单词向量的相似度，进行排序
+        // 根据查询语句与event对应单词向量的相似度，进行排序
         std::sort(sortedVec.begin(), sortedVec.end(), [&](const pair<int, double> &lhs, const pair<int, double> &rhs) {
             return lhs.second > rhs.second;
         });
@@ -303,7 +425,7 @@ namespace wd
     }
 
     // 根据查询文本的TF-IDF权重向量，找到符合条件的doc的id
-    set<int> WordQuery::getAllMatchingPages(const vector<pair<string, double>> &vec)
+    set<int> WordQuery::getAllMatchingEvents(const vector<pair<string, double>> &vec)
     {
         // 通过倒排索引表查找出 包含 vec 中每个单词的网页id
         vector<set<int>> docid_sets;                    // 存放单词的所在网页id集合
