@@ -7,18 +7,20 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/jsoncpp/include
     ${PROJECT_SOURCE_DIR}/log
     ${PROJECT_SOURCE_DIR}/redis
+    ${PROJECT_SOURCE_DIR}/dictTree
 )
 
 set(CMAKE_CXX_COMPILER g++)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++17")
 
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(NET_DIR ${CMAKE_CURRENT_SOURCE_DIR}/net)
 set(THREADPOOL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/threadpool)
 set(CACHE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/redis)
 set(LOG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/log)
+set(DictTree_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dictTree)
 
-file(GLOB SRCS ${SRC_DIR}/*.cpp ${NET_DIR}/*.cpp ${THREADPOOL_DIR}/*.cpp ${CACHE_DIR}/*.cpp ${LOG_DIR}/*.cpp)
+file(GLOB SRCS ${SRC_DIR}/*.cpp ${NET_DIR}/*.cpp ${THREADPOOL_DIR}/*.cpp ${CACHE_DIR}/*.cpp ${LOG_DIR}/*.cpp ${DictTree_DIR}/*.cpp)
 
 add_executable(server ${SRCS})
 

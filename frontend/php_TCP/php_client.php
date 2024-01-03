@@ -1,12 +1,4 @@
 <?php
-/*
-*Author:yuandong
-Date:2014-4-25
-Description:用php写的udp客户端，该客户端只是一个媒介作用，目的是把
-浏览器通过post请求传递的关键字通过udp协议传给server端(C语言写的),
-因为浏览器不能直接把关键字发给server
-
-*****************************************************/
 
 // 采用$_REQUEST超全局数组来接收index.html页面post请求传递过来的数据
 $buff=$_REQUEST["content"];

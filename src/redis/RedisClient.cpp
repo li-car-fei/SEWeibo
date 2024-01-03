@@ -16,7 +16,7 @@ namespace wd {
     {
         connection_options.host = ip;
         connection_options.port = port;
-        connection_options.password = password;
+        // connection_options.password = password;
         pool_options.size = pool_size;
     }
 
